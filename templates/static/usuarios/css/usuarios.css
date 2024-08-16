@@ -1,5 +1,5 @@
 .bg-img{
-    background-image: url('static/usuarios/img/bf.png');
+    background-image: url('/static/usuarios/img/bg.png');
     height: 100vh;
     background-size: cover;
 }
