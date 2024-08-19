@@ -64,4 +64,4 @@ def logar(request):
             messages.add_message(request, constants.ERROR,
                                  'Usuário ou senhas inválidas.')
 
-            return redirect('/empresarios/cadastrar_empresa')
+            return redirect('/usuarios/logar')

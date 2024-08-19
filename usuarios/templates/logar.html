@@ -24,7 +24,9 @@
                         </section>
                     {% endfor %}
                 {% endif %}
+                
                 <br>
+
                 <form action="{% url 'logar' %}" method="POST">
                     {% csrf_token %}
                     <label>Username</label>

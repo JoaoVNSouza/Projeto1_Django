@@ -23,7 +23,9 @@
                     {% endfor %}
                 {% endif %}
                 <h1>Cadastre-se</h1>
+
                 <br>
+                
                 <form action="{% url 'cadastro' %}" method="POST">
                     {% csrf_token %}
                     <label>Username</label>

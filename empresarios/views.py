@@ -11,6 +11,7 @@ def cadastrar_empresa(request):
             'tempo_existencia_choices': Empresa.tempo_existencia_choices,
             'area_choices': Empresa.area_choices
         })
+
     elif request.method == "POST":
         nome = request.POST.get('nome')
         cnpj = request.POST.get('cnpj')
