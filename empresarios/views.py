@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from .models import Empresa
 from django.contrib import messages
 from django.contrib.messages import constants
@@ -54,3 +54,27 @@ def cadastrar_empresa(request):
         messages.add_message(request, constants.SUCCESS,
                              'Empresa criada com sucesso')
         return redirect('/empresarios/cadastrar_empresa')
+
+
+def listar_empresas(request):
+
+    # Validar para que somente usuários logados acessam a página.
+    if not request.user.is_authenticated:
+        return redirect('/usuarios/logar')
+
+    if request.method == 'GET':
+        empresas = Empresa.objects.filter(user=request.user)
+        return render(request, 'listar_empresas.html', {'empresas': empresas})
+
+    elif request.method == 'POST':
+        pass
+
+
+def empresa(request, id: int):
+    empresa = Empresa.objects.get(id=id)
+
+    if request.method == 'GET':
+        return render(request, 'empresa.html', {'empresa': empresa})
+
+    elif request.method == 'POST':
+        pass
