@@ -73,8 +73,15 @@ def listar_empresas(request):
 def empresa(request, id: int):
     empresa = Empresa.objects.get(id=id)
 
+    # Validar se não está tentando entrar na empresa de outro usuário.
+    if not empresa.user == request.user:
+        messages.add_message(request, constants.ERROR,
+                             'Essa empresa não é sua.')
+        return redirect(f'/empresarios/listar_empresas')
+
     if request.method == 'GET':
-        return render(request, 'empresa.html', {'empresa': empresa})
+        documentos = Documento.objects.filter(empresa=empresa)
+        return render(request, 'empresa.html', {'empresa': empresa, 'documentos': documentos})
 
     elif request.method == 'POST':
         pass
