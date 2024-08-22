@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Empresa
+from .models import Empresa, Documento
 from django.contrib import messages
 from django.contrib.messages import constants
 
@@ -78,3 +78,37 @@ def empresa(request, id: int):
 
     elif request.method == 'POST':
         pass
+
+
+def add_doc(request, id: int):
+
+    if request.method == 'POST':
+        empresa = Empresa.objects.get(id=id)
+        titulo = request.POST.get('titulo')
+        arquivo = request.FILES.get('arquivo')
+
+        # Validações se o arquivo está OK.
+        if not arquivo:
+            messages.add_message(request, constants.ERROR,
+                                 'Envie um arquivo.')
+            return redirect(f'/empresarios/empresas/{id}')
+        # Validar formato de arquivo da imagem.
+
+        formato = arquivo.name.split('.')[-1].lower()
+        print(formato, '\n')
+        if not formato in ['jpg', 'jpeg', 'png', 'pdf']:
+            messages.add_message(request, constants.ERROR,
+                                 'Formato de arquivo incorreto. Envie um arquivo em formato JPG, JPEG, PNG ou PDF.')
+            return redirect(f'/empresarios/empresas/{id}')
+
+        documento = Documento.objects.create(
+            empresa=empresa,
+            titulo=titulo,
+            arquivo=arquivo
+        )
+        documento.save()
+
+        messages.add_message(request, constants.SUCCESS,
+                             'Arquivo cadastrado com sucesso.')
+
+        return redirect(f'/empresarios/empresas/{id}')

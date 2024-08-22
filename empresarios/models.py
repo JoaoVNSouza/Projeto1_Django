@@ -53,3 +53,16 @@ class Empresa(models.Model):
             return mark_safe('<span class="badge bg-success">Finalizada</span>')
         else:
             return mark_safe('<span class="badge bg-primary">Em andamento</span>')
+
+    @property
+    def valuation(self):
+        return f'{(100 * self.valor) / self.percentual_equity: .2f}'
+
+
+class Documento(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.DO_NOTHING)
+    titulo = models.CharField(max_length=50)
+    arquivo = models.FileField(upload_to='documentos')
+
+    def __str__(self):
+        return self.titulo
