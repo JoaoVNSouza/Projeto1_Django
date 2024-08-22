@@ -87,15 +87,21 @@ def add_doc(request, id: int):
         titulo = request.POST.get('titulo')
         arquivo = request.FILES.get('arquivo')
 
+        # Validar se o usuário é o dono da empresa.
+        if not empresa.user == request.user:
+            messages.add_message(request, constants.ERROR,
+                                 'Essa empresa não é sua.')
+            return redirect(f'/empresarios/listar_empresas')
+
         # Validações se o arquivo está OK.
         if not arquivo:
             messages.add_message(request, constants.ERROR,
                                  'Envie um arquivo.')
             return redirect(f'/empresarios/empresas/{id}')
-        # Validar formato de arquivo da imagem.
 
+        # Validar formato de arquivo da imagem.
         formato = arquivo.name.split('.')[-1].lower()
-        print(formato, '\n')
+
         if not formato in ['jpg', 'jpeg', 'png', 'pdf']:
             messages.add_message(request, constants.ERROR,
                                  'Formato de arquivo incorreto. Envie um arquivo em formato JPG, JPEG, PNG ou PDF.')
