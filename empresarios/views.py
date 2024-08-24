@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Empresa, Documento
+from .models import Empresa, Documento, Metricas
 from django.contrib import messages
 from django.contrib.messages import constants
 
@@ -123,5 +123,48 @@ def add_doc(request, id: int):
 
         messages.add_message(request, constants.SUCCESS,
                              'Arquivo cadastrado com sucesso.')
+
+        return redirect(f'/empresarios/empresas/{id}')
+
+
+def excluir_doc(request, id: int):
+
+    # Pegar o documento.
+    documento = Documento.objects.get(id=id)
+
+    # Validar se o usuário é o dono da empresa.
+    if documento.empresa.user != request.user:
+        messages.add_message(request, constants.ERROR,
+                             "Esse documento não é seu")
+        return redirect(f'/empresarios/empresas/{documento.empresa.id}')
+
+    # Deletar o documento.
+    documento.delete()
+
+    messages.add_message(request, constants.SUCCESS,
+                         'Documento deletado com sucesso')
+
+    return redirect(f'/empresarios/empresas/{documento.empresa.id}')
+
+
+def add_metrica(request, id: int):
+
+    if request.method == 'POST':
+        empresa = Empresa.objects.get(id=id)
+        titulo = request.POST.get('titulo')
+        valor = request.POST.get('valor')
+
+        # Validar se o usuário é o dono da empresa.
+        pass
+
+        metrica = Metricas(
+            empresa=empresa,
+            titulo=titulo,
+            valor=valor
+        )
+        metrica.save()
+
+        messages.add_message(request, constants.SUCCESS,
+                             'Métrica cadastrada com sucesso')
 
         return redirect(f'/empresarios/empresas/{id}')

@@ -66,3 +66,12 @@ class Documento(models.Model):
 
     def __str__(self):
         return self.titulo
+
+
+class Metricas(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.DO_NOTHING)
+    titulo = models.CharField(max_length=50)
+    valor = models.FloatField()
+
+    def __str__(self):
+        return self.titulo
