@@ -56,7 +56,7 @@ class Empresa(models.Model):
 
     @property
     def valuation(self):
-        return f'{(100 * self.valor) / self.percentual_equity: .2f}'
+        return float(f'{(100 * self.valor) / self.percentual_equity: .2f}')
 
 
 class Documento(models.Model):

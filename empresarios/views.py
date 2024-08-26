@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .models import Empresa, Documento, Metricas
+from investidores.models import PropostaInvestimento
 from django.contrib import messages
 from django.contrib.messages import constants
 
@@ -81,7 +82,10 @@ def empresa(request, id: int):
 
     if request.method == 'GET':
         documentos = Documento.objects.filter(empresa=empresa)
-        return render(request, 'empresa.html', {'empresa': empresa, 'documentos': documentos})
+        propostas_investimentos_enviadas = PropostaInvestimento.objects.filter(
+            empresa=empresa).filter(status='PE')
+        print(propostas_investimentos_enviadas)
+        return render(request, 'empresa.html', {'empresa': empresa, 'documentos': documentos, 'propostas': propostas_investimentos_enviadas})
 
     elif request.method == 'POST':
         pass
@@ -168,3 +172,9 @@ def add_metrica(request, id: int):
                              'Métrica cadastrada com sucesso')
 
         return redirect(f'/empresarios/empresas/{id}')
+
+
+def gerenciar_proposta(request, id: int):
+    acao = request.GET.get('acao')
+
+    return HttpResponse(acao)
