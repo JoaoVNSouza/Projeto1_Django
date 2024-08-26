@@ -82,6 +82,20 @@ def empresa(request, id: int):
 
     if request.method == 'GET':
         documentos = Documento.objects.filter(empresa=empresa)
+
+        # Método 1.
+        # Percentual de propostas vendidas.
+        """
+        percentual_vendido = 0
+        for pi in PropostaInvestimento.objects.filter(status='PA'):
+            percentual_vendido += pi.percentual
+        """
+
+        # Método 2.
+        total_captado = PropostaInvestimento.objects.filter(
+            status='PA').values_list('valor', flat=True)
+        print('\n', sum(total_captado), '\n')
+
         propostas_investimentos_enviadas = PropostaInvestimento.objects.filter(
             empresa=empresa).filter(status='PE')
         print(propostas_investimentos_enviadas)
@@ -176,5 +190,15 @@ def add_metrica(request, id: int):
 
 def gerenciar_proposta(request, id: int):
     acao = request.GET.get('acao')
+    proposta_investimento = PropostaInvestimento.objects.get(id=id)
 
-    return HttpResponse(acao)
+    if acao == 'aceitar':
+        messages.add_message(request, constants.SUCCESS, 'Proposta aceita')
+        proposta_investimento.status = 'PA'
+    elif acao == 'rejeitar':
+        messages.add_message(request, constants.SUCCESS, 'Proposta rejeitada')
+        proposta_investimento.status = 'PR'
+
+    proposta_investimento.save()
+
+    return redirect(f'/empresarios/empresas/{proposta_investimento.empresa.id}')
