@@ -18,12 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import redirect
+
+# TODO: URL PARA HOME
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuarios/', include('usuarios.urls')),
     path('empresarios/', include('empresarios.urls')),
     path('investidores/', include('investidores.urls')),
+    # Página Home ao acessar a URL.
+    path('', lambda request: redirect('/usuarios/logar/'))
 ]
 
 if settings.DEBUG:

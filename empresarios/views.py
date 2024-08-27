@@ -3,6 +3,7 @@ from .models import Empresa, Documento, Metricas
 from investidores.models import PropostaInvestimento
 from django.contrib import messages
 from django.contrib.messages import constants
+from datetime import datetime, timedelta
 
 
 # Create your views here.
@@ -64,11 +65,40 @@ def listar_empresas(request):
         return redirect('/usuarios/logar')
 
     if request.method == 'GET':
+        nome_empresa = request.GET.get('empresa')
         empresas = Empresa.objects.filter(user=request.user)
-        return render(request, 'listar_empresas.html', {'empresas': empresas})
 
-    elif request.method == 'POST':
-        pass
+        # Filtrar empresas por nome buscado.
+        if nome_empresa:
+            empresas = empresas.filter(nome__icontains=nome_empresa)
+
+        return render(request, 'listar_empresas.html', {'empresas': empresas, 'nome_empresa': nome_empresa})
+
+
+def dashboard(request, id: int):
+    # Pegar dados da empresa e dia.
+    empresa = Empresa.objects.get(id=id)
+    today = datetime.now().date()
+
+    seven_days_ago = today - timedelta(days=6)
+    proposta_por_dia = {}  # {dia: quantia}
+
+    for i in range(7):
+        day = seven_days_ago + timedelta(days=i)
+
+        propostas = PropostaInvestimento.objects.filter(
+            empresa=empresa, status='PA', data=day)
+        total_dia = 0
+        for proposta in propostas:
+            total_dia += proposta.valor
+
+        proposta_por_dia[day.strftime('%d/%m/%Y')] = int(total_dia)
+
+    for dia, total in proposta_por_dia.items():
+        print(f'Data: {dia}, Total de Propostas: {total}')
+
+    # Gerar gráfico.
+    return render(request, 'dashboard.html', {'labels': list(proposta_por_dia.keys()), 'values': list(proposta_por_dia.values())})
 
 
 def empresa(request, id: int):
@@ -99,6 +129,7 @@ def empresa(request, id: int):
 
         propostas_investimentos_enviadas = PropostaInvestimento.objects.filter(
             empresa=empresa).filter(status='PE')
+
         # print(propostas_investimentos_enviadas)
         return render(request, 'empresa.html', {'empresa': empresa, 'documentos': documentos, 'propostas': propostas_investimentos_enviadas, 'total_captado': total_captado, 'valuation_atual': valuation_atual})
 

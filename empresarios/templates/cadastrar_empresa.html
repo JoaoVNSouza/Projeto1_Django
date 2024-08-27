@@ -4,7 +4,7 @@
 {% block 'head' %}
 
     <link rel="stylesheet" href="{% static 'usuarios/css/usuarios.css' %}">
-
+    {% include "partials/barra_navegacao.html" %}
 {% endblock 'head' %}
 
 
@@ -21,7 +21,7 @@
             {% endfor %}
         {% endif %}
 
-
+        
         <div class="row">
             <div class="col-md">
                 

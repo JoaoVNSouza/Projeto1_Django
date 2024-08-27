@@ -4,10 +4,10 @@ from empresarios.models import Empresa, Documento, Metricas
 from investidores.models import PropostaInvestimento
 from django.contrib import messages
 from django.contrib.messages import constants
+from datetime import datetime
+
 
 # Create your views here.
-
-
 def sugestao(request):
     # Validar se o usuário está logado.
     if not request.user.is_authenticated:
@@ -29,6 +29,9 @@ def sugestao(request):
         elif tipo == 'D':  # Despojado.
             empresas = Empresa.objects.filter(
                 tempo_existencia__in=['-6', '+6', '+1']).exclude(estagio='E')
+
+        elif tipo == 'G':  # Genérico.
+            empresas = Empresa.objects.all()
 
         # Filtar por área.
         empresas = empresas.filter(area__in=area)
@@ -64,13 +67,17 @@ def ver_empresa(request, id: int):
     if percentual_vendido >= limiar:
         concredizado = True
 
-    return render(request, 'ver_empresa.html', {'empresa': empresa, 'documentos': documentos, 'metricas': metricas, 'percentual_vendido': int(percentual_vendido), 'concredizado': concredizado})
+    # Percentual disponivel.
+    percentual_disponivel = empresa.percentual_equity - percentual_vendido
+
+    return render(request, 'ver_empresa.html', {'empresa': empresa, 'documentos': documentos, 'metricas': metricas, 'percentual_vendido': int(percentual_vendido), 'concredizado': concredizado, 'percentual_disponivel': percentual_disponivel})
 
 
 def realizar_proposta(request, id: int):
     valor = request.POST.get('valor')
     percentual = request.POST.get('percentual')
     empresa = Empresa.objects.get(id=id)
+    day = datetime.now().date()
 
     # Validações.
     # Verificar se a qtde de porcentagem que o investidor quer adiquirir seja menor que a qtde disponível.
@@ -98,8 +105,10 @@ def realizar_proposta(request, id: int):
         percentual=percentual,
         empresa=empresa,
         investidor=request.user,
-        status='AS'
+        status='AS',
+        data=day
     )
+
     proposta.save()
 
     return redirect(f'/investidores/assinar_contrato/{proposta.id}')

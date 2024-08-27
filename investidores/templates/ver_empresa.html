@@ -54,23 +54,23 @@
                     <h5>Percentual</h5>
                     <span class="sub-fonte">Total a venda: {{empresa.percentual_equity}}%</span>
                     <br>
-                    <span class="sub-fonte">Disponivel à compra: %</span>
+                    <span class="sub-fonte">Disponivel à compra: {{ percentual_disponivel }}%</span>
                 </div>
                 <br>
                 <span class="badge bg-warning">{{empresa.publico_alvo}}</span>
                 <br><br>
-                <h4 style="color: #92D5EB">Indicadores |</h4>
+                <h4 style="color: #ffffff">Indicadores </h4>
                 
-                {% for metrica in metricas %}
                     <div class="row">
-                        <div class="col-md-3" >
-                            <div class="dark-color" style="padding: 20px; text-align: center;">
-                                <h5>{{ metrica.titulo}}</h5>
-                                <h6>R$ {{ metrica.valor }}</h6>
+                        {% for metrica in metricas %}
+                            <div class="col-md-3" >
+                                <div class="dark-color" style="padding: 20px; text-align: center;">
+                                    <h5>{{ metrica.titulo}}</h5>
+                                    <h6>R$ {{ metrica.valor }}</h6>
+                                </div>
                             </div>
-                        </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
 
                 <hr>
                 <div class="row">
