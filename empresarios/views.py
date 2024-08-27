@@ -85,21 +85,22 @@ def empresa(request, id: int):
 
         # Método 1.
         # Percentual de propostas vendidas.
-        """
+
         percentual_vendido = 0
         for pi in PropostaInvestimento.objects.filter(status='PA'):
             percentual_vendido += pi.percentual
-        """
 
         # Método 2.
-        total_captado = PropostaInvestimento.objects.filter(
-            status='PA').values_list('valor', flat=True)
-        print('\n', sum(total_captado), '\n')
+        total_captado = sum(PropostaInvestimento.objects.filter(
+            status='PA').values_list('valor', flat=True))
+
+        valuation_atual = (100 * float(total_captado) /
+                           float(percentual_vendido)) if percentual_vendido != 0 else 0
 
         propostas_investimentos_enviadas = PropostaInvestimento.objects.filter(
             empresa=empresa).filter(status='PE')
-        print(propostas_investimentos_enviadas)
-        return render(request, 'empresa.html', {'empresa': empresa, 'documentos': documentos, 'propostas': propostas_investimentos_enviadas})
+        # print(propostas_investimentos_enviadas)
+        return render(request, 'empresa.html', {'empresa': empresa, 'documentos': documentos, 'propostas': propostas_investimentos_enviadas, 'total_captado': total_captado, 'valuation_atual': valuation_atual})
 
     elif request.method == 'POST':
         pass

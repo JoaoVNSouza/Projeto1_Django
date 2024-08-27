@@ -49,8 +49,22 @@ def ver_empresa(request, id: int):
     empresa = Empresa.objects.get(id=id)
     documentos = Documento.objects.filter(empresa=empresa)
     metricas = Metricas.objects.filter(empresa=empresa)
+    propostas = PropostaInvestimento.objects.filter(
+        empresa=empresa).filter(status='PA')
+    percentual_vendido = 0
 
-    return render(request, 'ver_empresa.html', {'empresa': empresa, 'documentos': documentos, 'metricas': metricas})
+    # Prosposta vendidas.
+    for proposta in propostas:
+        percentual_vendido += proposta.percentual
+
+    # Validar se já vendeu 80%.
+    limiar = (80 * empresa.percentual_equity) / 100
+    concredizado = False
+
+    if percentual_vendido >= limiar:
+        concredizado = True
+
+    return render(request, 'ver_empresa.html', {'empresa': empresa, 'documentos': documentos, 'metricas': metricas, 'percentual_vendido': int(percentual_vendido), 'concredizado': concredizado})
 
 
 def realizar_proposta(request, id: int):

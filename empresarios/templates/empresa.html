@@ -43,7 +43,7 @@
                         <a href="#" class="sub-fonte">Ver investidores</a>
                     </div>
                     <div class="col-md">
-                        <h2 class="titulo2">0 Captados</h2>
+                        <h2 class="titulo2">{{ total_captado }} Captados</h2>
                     </div>
                 </div>
                 <hr>
@@ -65,7 +65,7 @@
                     </div>
                     <div class="col-md">
                         <h5>Valuation</h5>
-                        <span class="sub-fonte">Atual: 000</span>
+                        <span class="sub-fonte">Atual: {{ valuation_atual }}</span>
                         <br>
                         <span class="sub-fonte">Esperado: {{ empresa.valuation }}</span>
                     </div>
